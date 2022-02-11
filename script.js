@@ -1,3 +1,12 @@
+/* TODO
+
+FIX BUG (EQUAL I THINK?)
+PREVENT NUMBERS FLOWING OUT OF SCREEN (lower font size when too many numbers)
+
+ADD KEYBOARD SUPPORT
+ADD CSS
+*/
+
 const currentOperationDisplay = document.getElementById('current-operation');
 const previousOperationDisplay = document.getElementById('previous-operation');
 const operatorDisplay = document.getElementById('operator');
@@ -15,22 +24,16 @@ const changeSignButton = document.getElementById('change-sign')
 let operator = null;
 let operatorUsed = false;
 let pointUsed = false;
-let operands = [0, 0];
+let operands = [];
 let currentOperandIndex = 0;
+let str = "";
 
 numberButtons.forEach((button) => {
     button.addEventListener('click', () => {
-        if (operatorUsed) {
-            currentOperandIndex = 1;
+        if (str.length < 9) {
+            str = str + button.textContent;
+            updateDisplay('current', str);
         }
-
-        if (pointUsed === true) {
-            operands[currentOperandIndex] = null;
-        }
-        else {
-            operands[currentOperandIndex] = operands[currentOperandIndex] * 10 + parseFloat(button.textContent);
-        }
-        updateDisplay('current', operands[currentOperandIndex]);
     })
 })
 
@@ -51,41 +54,78 @@ divideButton.addEventListener('click', () => {
 })
 
 equalButton.addEventListener('click', () => {
+    operands[currentOperandIndex] = parseFloat(str);
     if (operands[0] === undefined || operands[1] === undefined) {
         return;
     }
     operate(operands[0], operands[1], operator);
-    updateDisplay('previous', 0);
+    updateDisplay('previous', '\u00A0');
+    updateDisplay('operator', '\u00A0');
     operatorUsed = false;
     pointUsed = false;
 })
 
 clearButton.addEventListener('click', () => {
     updateDisplay('current', 0);
-    updateDisplay('previous', 0);
-    operands = [0, 0];
+    updateDisplay('previous', '\u00A0');
+    updateDisplay('operator', '\u00A0');
+    operands = [];
     operator = null;
     operatorUsed = false;
     currentOperandIndex = 0;
     pointUsed = false;
+    str = "";
 })
 
 pointButton.addEventListener('click', () => {
-    if (pointUsed === false) {
+    if (!pointUsed) {
+        str = str + '.';
         pointUsed = true;
+        updateDisplay('current', str);
     }
 })
 
 backspaceButton.addEventListener('click', () => {
-    // TO FIX
-    operands[currentOperandIndex] = Math.floor(operands[currentOperandIndex] / 10);
-    updateDisplay('current', operands[currentOperandIndex]);
+    if (str.charAt(str.length - 1) == ".") {
+        pointUsed = false;
+    }
+
+    str = str.slice(0, -1);
+
+    if (str == "") {
+        str = "0"
+        updateDisplay('current', str)
+    }
+    else {
+        updateDisplay('current', str);
+    }
 })
 
 changeSignButton.addEventListener('click', () => {
-    operands[currentOperandIndex] = -operands[currentOperandIndex];
-    updateDisplay('current', operands[currentOperandIndex]);
+    if (str.charAt(0) == '-') {
+        str = str.substring(1);
+    }
+    else {
+        str = '-' + str;
+    }
+    updateDisplay('current', str);
 })
+
+function handleOperation(op) {
+    operands[currentOperandIndex] = parseFloat(str);
+    if (operatorUsed) {
+        operate(operands[0], operands[1], operator);
+    }
+    else {
+        operatorUsed = true;
+        currentOperandIndex = 1;
+    }
+    str = "";
+    operator = op;
+    updateDisplay('previous', operands[0]);
+    updateDisplay('operator', operator);
+    pointUsed = false;
+}
 
 function operate(a, b, operator) {
     switch (operator) {
@@ -108,8 +148,9 @@ function operate(a, b, operator) {
         default:
             operands[0] = 'Error';
     }
-    updateDisplay('current', operands[0]);
-    currentOperandIndex = 0;
+    str = operands[0].toString();
+    updateDisplay('current', str);
+    currentOperandIndex = 1;
 }
 
 function updateDisplay(display, text) {
@@ -124,19 +165,4 @@ function updateDisplay(display, text) {
             operatorDisplay.textContent = text;
             break;
     }
-}
-
-function handleOperation(op) {
-    if (operatorUsed) {
-        operate(operands[0], operands[1], operator);
-    }
-    else {
-        operatorUsed = true;
-    }
-    operator = op;
-    updateDisplay('current', 0);
-    updateDisplay('previous', operands[0]);
-    updateDisplay('operator', operator);
-    pointUsed = false;
-    operands[1] = 0;
 }
