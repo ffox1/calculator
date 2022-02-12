@@ -1,37 +1,60 @@
+@font-face {
+    font-family: 'digital-7_monomono';
+    src: url('fonts/digital7mono-b1g5-webfont.woff2') format('woff2'),
+         url('fonts/digital7mono-b1g5-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    background: url("images/background.png");
+}
+
 .buttons-panel {
-    display: flex;
-    border: 1px solid black;
-    background-color: darkslategray;
-    padding: 10px 9px;
-}
-
-.left-part {
-    display : flex;
-    flex-flow: wrap;
-}
-
-.right-part {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    grid-auto-rows: 50px;
+    gap: 10px;
+    place-content: center;
+    margin-top: 20px;
 }
 
 button {
     font-size: 30px;
-    padding: 10px;
-    width: 50px;
-    margin: 5px;
-    text-align: center;
+    font-weight: 600;
+    background-color: #ececec;
+    border-radius: 12px;
+}
 
+.number-button, #point, #equal {
+    background-color: #2e2e2e;
+    color: #ffffff;
+}
+
+#clear {
+    background-color: rgb(163, 16, 16);
+    color: #ffffff;
 }
 
 #add {
-    height: 125px;
+    grid-column: 4;
+    grid-row: 4 / 6;
+}
+
+#backspace {
+    font-size: 20px;
 }
 
 .display {
-    background-color: rgba(64, 114, 17, 0.664);
+    font-family: 'digital-7_monomono', serif;
+    background-color: #c1d797;
     text-align: end;
     font-size: 40px;
+    border: 10px solid #c1d797;
+    border-radius: 15px;
 }
 
 .previous-operation {
@@ -50,5 +73,26 @@ button {
 .calculator {
     display: flex;
     flex-direction: column;
+    position: absolute;
+    top: 15%;
     width: 260px;
+    border: 15px solid #5a5c68;
+    border-radius: 15px;
+    background-color: #5a5c68;
+    -webkit-box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 10px 5px rgba(0,0,0,0.5); 
+    box-shadow: -10px 0px 13px -7px #000000, 10px 0px 13px -7px #000000, 5px 5px 10px 5px rgba(0,0,0,0.5);
+}
+
+.footer {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: absolute;
+    bottom: 15px;
+}
+
+a {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 20px;
 }

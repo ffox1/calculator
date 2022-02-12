@@ -23,12 +23,17 @@ let operator = null;
 let operatorUsed = false;
 let operands = [];
 let currentOperandIndex = 0;
-let str = "";
+let str = "0";
 
 numberButtons.forEach((button) => {
     button.addEventListener('click', () => {
         if (str.length < 16) {
-            str = str + button.textContent;
+            if (str == '0') {
+                str = button.textContent;
+            }
+            else {
+                str = str + button.textContent;
+            }
             updateDisplay('current', str);
         }
     })
