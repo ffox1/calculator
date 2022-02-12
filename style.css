@@ -55,6 +55,7 @@ button {
     font-size: 40px;
     border: 10px solid #c1d797;
     border-radius: 15px;
+    min-height: 54px;
 }
 
 .previous-operation {
@@ -65,9 +66,7 @@ button {
 }
 
 #current-operation {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    display: inline-block;
 }
 
 .calculator {

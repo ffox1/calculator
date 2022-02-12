@@ -1,7 +1,6 @@
 /* TODO
 
 ADD KEYBOARD SUPPORT
-ADD CSS
 */
 
 const currentOperationDisplay = document.getElementById('current-operation');
@@ -17,7 +16,6 @@ const clearButton = document.getElementById('clear');
 const pointButton = document.getElementById('point');
 const backspaceButton = document.getElementById('backspace');
 const changeSignButton = document.getElementById('change-sign')
-const currentOperationDisplayHeight = currentOperationDisplay.clientHeight;
 
 let operator = null;
 let operatorUsed = false;
@@ -156,7 +154,6 @@ function updateDisplay(display, text) {
             currentOperationDisplay.textContent = text;
             if (text.length > 13) {
                 currentOperationDisplay.style.fontSize = '30px'
-                currentOperationDisplay.style.height = `${currentOperationDisplayHeight}px`;
             }
             else {
                 currentOperationDisplay.style.fontSize = '40px';
