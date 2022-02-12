@@ -40,6 +40,13 @@ button {
     font-size: 20px;
     gap: 10px;
 }
+
+#current-operation {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
 .calculator {
     display: flex;
     flex-direction: column;

@@ -1,8 +1,5 @@
 /* TODO
 
-FIX BUG (EQUAL I THINK?)
-PREVENT NUMBERS FLOWING OUT OF SCREEN (lower font size when too many numbers)
-
 ADD KEYBOARD SUPPORT
 ADD CSS
 */
@@ -20,17 +17,17 @@ const clearButton = document.getElementById('clear');
 const pointButton = document.getElementById('point');
 const backspaceButton = document.getElementById('backspace');
 const changeSignButton = document.getElementById('change-sign')
+const currentOperationDisplayHeight = currentOperationDisplay.clientHeight;
 
 let operator = null;
 let operatorUsed = false;
-let pointUsed = false;
 let operands = [];
 let currentOperandIndex = 0;
 let str = "";
 
 numberButtons.forEach((button) => {
     button.addEventListener('click', () => {
-        if (str.length < 9) {
+        if (str.length < 16) {
             str = str + button.textContent;
             updateDisplay('current', str);
         }
@@ -55,14 +52,13 @@ divideButton.addEventListener('click', () => {
 
 equalButton.addEventListener('click', () => {
     operands[currentOperandIndex] = parseFloat(str);
-    if (operands[0] === undefined || operands[1] === undefined) {
+    if (operands[0] === undefined || operands[1] === undefined || !operatorUsed) {
         return;
     }
     operate(operands[0], operands[1], operator);
     updateDisplay('previous', '\u00A0');
     updateDisplay('operator', '\u00A0');
     operatorUsed = false;
-    pointUsed = false;
 })
 
 clearButton.addEventListener('click', () => {
@@ -73,23 +69,17 @@ clearButton.addEventListener('click', () => {
     operator = null;
     operatorUsed = false;
     currentOperandIndex = 0;
-    pointUsed = false;
     str = "";
 })
 
 pointButton.addEventListener('click', () => {
-    if (!pointUsed) {
+    if (parseFloat(str) % 1 == 0) {
         str = str + '.';
-        pointUsed = true;
         updateDisplay('current', str);
     }
 })
 
 backspaceButton.addEventListener('click', () => {
-    if (str.charAt(str.length - 1) == ".") {
-        pointUsed = false;
-    }
-
     str = str.slice(0, -1);
 
     if (str == "") {
@@ -112,6 +102,9 @@ changeSignButton.addEventListener('click', () => {
 })
 
 function handleOperation(op) {
+    if (str == '') {
+        str = 0;
+    }
     operands[currentOperandIndex] = parseFloat(str);
     if (operatorUsed) {
         operate(operands[0], operands[1], operator);
@@ -124,7 +117,6 @@ function handleOperation(op) {
     operator = op;
     updateDisplay('previous', operands[0]);
     updateDisplay('operator', operator);
-    pointUsed = false;
 }
 
 function operate(a, b, operator) {
@@ -157,6 +149,13 @@ function updateDisplay(display, text) {
     switch (display) {
         case 'current':
             currentOperationDisplay.textContent = text;
+            if (text.length > 13) {
+                currentOperationDisplay.style.fontSize = '30px'
+                currentOperationDisplay.style.height = `${currentOperationDisplayHeight}px`;
+            }
+            else {
+                currentOperationDisplay.style.fontSize = '40px';
+            }
             break;
         case 'previous':
             previousOperationDisplay.textContent = text;
