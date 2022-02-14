@@ -1,16 +1,8 @@
-/* TODO
-
-ADD KEYBOARD SUPPORT
-*/
-
 const currentOperationDisplay = document.getElementById('current-operation');
 const previousOperationDisplay = document.getElementById('previous-operation');
 const operatorDisplay = document.getElementById('operator');
 const numberButtons = document.querySelectorAll('.number-button');
-const addButton = document.getElementById('add');
-const subtractButton = document.getElementById('subtract');
-const multiplyButton = document.getElementById('multiply');
-const divideButton = document.getElementById('divide');
+const signButtons = document.querySelectorAll('.sign-button');
 const equalButton = document.getElementById('equal');
 const clearButton = document.getElementById('clear');
 const pointButton = document.getElementById('point');
@@ -24,75 +16,17 @@ let currentOperandIndex = 0;
 let str = "0";
 
 numberButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        if (str.length < 16) {
-            if (str == '0') {
-                str = button.textContent;
-            }
-            else {
-                str = str + button.textContent;
-            }
-            updateDisplay('current', str);
-        }
-    })
+    button.addEventListener('click', () => useNumber(button.textContent))
 })
 
-addButton.addEventListener('click', () => {
-    handleOperation('+');
+signButtons.forEach((button) => {
+    button.addEventListener('click', () => handleOperation(button.textContent))
 })
 
-subtractButton.addEventListener('click', () => {
-    handleOperation('-');
-})
-
-multiplyButton.addEventListener('click', () => {
-    handleOperation('*');
-})
-
-divideButton.addEventListener('click', () => {
-    handleOperation('/');
-})
-
-equalButton.addEventListener('click', () => {
-    operands[currentOperandIndex] = parseFloat(str);
-    if (operands[0] === undefined || operands[1] === undefined || !operatorUsed) {
-        return;
-    }
-    operate(operands[0], operands[1], operator);
-    updateDisplay('previous', '\u00A0');
-    updateDisplay('operator', '\u00A0');
-    operatorUsed = false;
-})
-
-clearButton.addEventListener('click', () => {
-    updateDisplay('current', 0);
-    updateDisplay('previous', '\u00A0');
-    updateDisplay('operator', '\u00A0');
-    operands = [];
-    operator = null;
-    operatorUsed = false;
-    currentOperandIndex = 0;
-    str = "";
-})
-
-pointButton.addEventListener('click', () => {
-    if (parseFloat(str) % 1 == 0) {
-        str = str + '.';
-        updateDisplay('current', str);
-    }
-})
-
-backspaceButton.addEventListener('click', () => {
-    str = str.slice(0, -1);
-
-    if (str == "") {
-        str = "0"
-        updateDisplay('current', str)
-    }
-    else {
-        updateDisplay('current', str);
-    }
-})
+equalButton.addEventListener('click', () => useEqual());
+clearButton.addEventListener('click', () => clear());
+pointButton.addEventListener('click', () => usePoint());
+backspaceButton.addEventListener('click', () => useBackspace());
 
 changeSignButton.addEventListener('click', () => {
     if (str.charAt(0) == '-') {
@@ -103,6 +37,106 @@ changeSignButton.addEventListener('click', () => {
     }
     updateDisplay('current', str);
 })
+
+window.addEventListener('keydown', (e) => {
+    switch(e.key) {
+        case '+':
+            handleOperation('+');
+            break;
+
+        case '-':
+            handleOperation('-');
+            break;
+
+        case '*':
+            handleOperation('*');
+            break;
+
+        case '/':
+            handleOperation('/');
+            break;
+
+        case '=':
+            useEqual();
+            
+        case 'Enter':
+            e.preventDefault();
+            useEqual();
+            
+            break;
+
+        case 'c':
+        case 'C':
+            clear();
+            break;
+
+        case '.':
+            usePoint();
+            break;
+
+        case 'Backspace':
+            useBackspace();
+            break;
+
+        default:
+            if(parseInt(e.key) >= 0 && parseInt(e.key) <=9){
+                useNumber(e.key);
+            }
+            break;
+    }
+})
+
+function useNumber(number) {
+    if (str.length < 16) {
+        if (str == '0') {
+            str = number;
+        }
+        else {
+            str = str + number;
+        }
+        updateDisplay('current', str);
+    }
+}
+
+function useEqual() {
+    operands[currentOperandIndex] = parseFloat(str);
+    if (operands[0] === undefined || operands[1] === undefined || !operatorUsed) {
+        return;
+    }
+    operate(operands[0], operands[1], operator);
+    updateDisplay('previous', '\u00A0');
+    updateDisplay('operator', '\u00A0');
+    operatorUsed = false;
+}
+
+function clear() {
+    updateDisplay('current', 0);
+    updateDisplay('previous', '\u00A0');
+    updateDisplay('operator', '\u00A0');
+    operands = [];
+    operator = null;
+    operatorUsed = false;
+    currentOperandIndex = 0;
+    str = "0";
+}
+
+function usePoint() {
+    if (parseFloat(str) % 1 == 0 && str.slice(-1) != '.') {
+        str = str + '.';
+        updateDisplay('current', str);
+    }
+}
+
+function useBackspace() {
+    str = str.slice(0, -1);
+    if (str == "") {
+        str = "0"
+        updateDisplay('current', str)
+    }
+    else {
+        updateDisplay('current', str);
+    }
+}
 
 function handleOperation(op) {
     if (str == '') {
